@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xmlns:ctx="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+    <ctx:annotation-config/>
+    <ctx:component-scan base-package="com.fuse"/>
+
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <dataFormats>
+            <bindy type="Csv" id="bindyDataformat" classType="com.fuse.model.Student"/>
+        </dataFormats>
+
+        <route id="routeDataformat">
+            <from uri="file:/data"/>
+            <split>
+                <tokenize token="\n"/>
+                <log message=">> Student : ${body}"/>
+                <unmarshal ref="bindyDataformat"/>
+                <bean ref="myBean"/>
+                <marshal ref="bindyDataformat"/>
+                <log message=">> Student Registered : ${body}"/>
+            </split>
+        </route>
+    </camelContext>
+
+</beans>
